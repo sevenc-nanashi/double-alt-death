@@ -10,6 +10,7 @@ import unicodedata
 import keyboard
 import time
 import math
+import os
 import tkinter as tk
 from tkinter import ttk
 from threading import Thread
@@ -74,7 +75,10 @@ while True:
                             root = tk.Tk()
                             root.attributes("-topmost", True)
                             root.title(u"Double Alt Death")
-                            root.iconbitmap('./alt_death.ico')
+                            if os.path.exists('./alt_death.ico'):
+                                root.iconbitmap('./alt_death.ico')
+                            else:
+                                root.iconbitmap('./src/alt_death.ico')
                             root.resizable(width=False, height=False)
                             root.after(10, lambda: root.focus_force())
                             root.bind(
