@@ -1,7 +1,4 @@
-**＿人人人人人人人人人人人人人人人人人＿  
-＞&emsp;&emsp;&nbsp;&emsp;&nbsp;&nbsp;&nbsp;Double&nbsp;Alt&nbsp;Death&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;&nbsp;＜  
-＞Created&nbsp;by&nbsp;名無し。(@MNoNamer)＜  
-￣^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y^Y￣**  
+![ロゴ](https://github.com/sevenc-nanashi/double-alt-death/blob/master/src/alt_death.png)
 # 機能説明
 右Altを2回押すとクリップボードを加工し、置き換えます。  
 右Shiftを押しながらすると加工先を変更できます。  
