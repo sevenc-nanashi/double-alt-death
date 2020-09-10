@@ -24,7 +24,10 @@ def callback(url):
     webbrowser.open_new(url)
 
 TRAY_TOOLTIP = 'Double Alt Death'
-TRAY_ICON = './alt_death.ico'
+if os.path.exists('./alt_death.ico'):
+    TRAY_ICON = './alt_death.ico'
+else:
+    TRAY_ICON = './src/alt_death.ico'
 
 def create_menu_item(menu, label, func):
     item = wx.MenuItem(menu, -1, label)
