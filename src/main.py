@@ -99,7 +99,7 @@ class My_Application(wx.Frame):
         sys.exit()
 
 
-modes=["突然の死","空白","全角空白"]
+modes=["突然の死","空白","全角空白","濁点"]
 current_mode=0
 last_time=None
 last_cb=""
@@ -213,6 +213,10 @@ while not end_flag:
                             sd=" ".join(list(cb))
                         elif current_mode == 2:
                             sd="　".join(list(cb))
+                        elif current_mode == 3:
+                            sd=""
+                            for t in list(cb):
+                                sd+=t+'゛'
                         pyperclip.copy(sd)
                             
                     except Exception as e:
