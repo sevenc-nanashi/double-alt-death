@@ -216,7 +216,10 @@ while not end_flag:
                         elif current_mode == 3:
                             sd=""
                             for t in list(cb):
-                                sd+=t+'゛'
+                                if unicodedata.category(t)[0] in "ZP":
+                                    sd+=t
+                                else:
+                                    sd+=t+'゛'
                         pyperclip.copy(sd)
                             
                     except Exception as e:
