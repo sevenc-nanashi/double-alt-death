@@ -218,6 +218,8 @@ while not end_flag:
                             for t in list(cb):
                                 if unicodedata.category(t)[0] in "ZP":
                                     sd+=t
+                                elif text_len(t)==1:
+                                    sd+=t+'ﾞ'
                                 else:
                                     sd+=t+'゛'
                         pyperclip.copy(sd)
