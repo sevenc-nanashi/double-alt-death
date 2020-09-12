@@ -170,9 +170,6 @@ while not end_flag:
                             root.resizable(width=False, height=False)
                             root.after(10, lambda: root.focus_force())
                             root.bind(
-                                '<FocusOut>',lambda e: root.destroy()
-                            )
-                            root.bind(
                                 '<Return>',lambda e: root.destroy()
                             )
                             def change_mode_keyu(event):
@@ -204,7 +201,15 @@ while not end_flag:
                             ) 
                             
                             combo.pack()
-                                
+                            def when_focus_out(event):
+                                try:
+                                    if combo.focus_get() == None and str(event.widget) == ".":
+                                        root.destroy()
+                                except KeyError:
+                                    return
+                            root.bind(
+                                '<FocusOut>',when_focus_out
+                            )
                             Thread(target=root.mainloop()).start
                         sd=""   
                         if current_mode == 0:
