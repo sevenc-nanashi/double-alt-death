@@ -52,10 +52,10 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
 
     def CreatePopupMenu(self):
         menu = wx.Menu()
-        create_menu_item(menu, '情報', self.menu_info)
-        create_menu_item(menu, 'カスタム文字の設定', self.menu_pref)
+        create_menu_item(menu, '情報(&I)', self.menu_info)
+        create_menu_item(menu, 'カスタム文字の設定(&C)', self.menu_pref)
         menu.AppendSeparator()
-        create_menu_item(menu, '終了', self.menu_exit)
+        create_menu_item(menu, '終了(&X)', self.menu_exit)
         return menu
 
     def set_icon(self, path):
