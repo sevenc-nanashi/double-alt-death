@@ -211,6 +211,7 @@ def launch_tray():
     MyApp = wx.App()
     My_Application()
     MyApp.MainLoop()
+Lastest_clip=None
 Thread(target=launch_tray).start()
 while not end_flag:
     time.sleep(0.01)
@@ -220,96 +221,103 @@ while not end_flag:
         t_end = time.time() + 0.1
         while time.time() < t_end and not end_flag:
             if keyboard.is_pressed('right alt'):
-                cb=pyperclip.paste()
-                if cb == "":
-                    Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
-                else:
-                    
-                    try:
-                        if keyboard.is_pressed('right shift'):
-                            root = tk.Tk()
-                            root.attributes("-topmost", True)
-                            root.title(u"Double Alt Death")
-                            if os.path.exists('./alt_death.ico'):
-                                root.iconbitmap('./alt_death.ico')
-                            else:
-                                root.iconbitmap('./src/alt_death.ico')
-                            root.resizable(width=False, height=False)
-                            root.after(10, lambda: root.focus_force())
-                            root.bind(
-                                '<Return>',lambda e: root.destroy()
-                            )
-                            tmp=modes.copy()
-                            tmp.extend(Customs)
-                            def change_mode_keyu(event):
-                                global current_mode
-                                current_mode-=1
-                                current_mode%=len(tmp)
-                                combo.current(current_mode)
-                            root.bind(
-                                '<Up>',change_mode_keyu
-                            )
-                            def change_mode_keyd(event):
-                                global current_mode
-                                current_mode+=1
-                                current_mode%=len(tmp)
-                                combo.current(current_mode)
-                            root.bind(
-                                '<Down>',change_mode_keyd
-                            )  
-                            combo = ttk.Combobox(root, state='readonly')
-                            
-                            combo["values"] = tmp
-                            
-                            combo.current(current_mode)
-                            def change_mode(event):
-                                global current_mode
-                                current_mode=tmp.index(combo.get())
-                                root.destroy()
-                            
-                            combo.bind(
-                                '<<ComboboxSelected>>',change_mode
-                            ) 
-                            
-                            combo.pack()
-                            def when_focus_out(event):
-                                try:
-                                    if combo.focus_get() == None and str(event.widget) == ".":
-                                        root.destroy()
-                                except KeyError:
-                                    return
-                            root.bind(
-                                '<FocusOut>',when_focus_out
-                            )
-                            Thread(target=root.mainloop()).start
-                        sd=""   
-                        if current_mode == 0:
-                            sd = death_generator("\n".join(cb.split("\n")))
-                        elif current_mode == 1:
-                            sd=" ".join(list(cb))
-                        elif current_mode == 2:
-                            sd="　".join(list(cb))
-                        elif current_mode == 3:
-                            sd=""
-                            for t in list(cb):
-                                if unicodedata.category(t)[0] in "ZP":
-                                    sd+=t
-                                elif text_len(t)==1:
-                                    sd+=t+'ﾞ'
-                                else:
-                                    sd+=t+'゛'
-                        elif current_mode == 4:
-                            sd="☆".join(list(cb))
-                        elif current_mode == 5:
-                            sd="★".join(list(cb))
-                        else:
-                            sd=Customs[current_mode-len(modes)].join(list(cb))
-                        pyperclip.copy(sd)
+                if keyboard.is_pressed('right ctrl'):
+                    if Lastest_clip == None:
+                        Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
+                    else:
+                        pyperclip.copy(Lastest_clip)
                         Thread(target=partial(ws.PlaySound,'SystemAsterisk', ws.SND_ALIAS )).start()
-                    except Exception as e:
-                        raise e
-                    last_time=time.time()
-                    last_cb=cb
+                else:
+                    cb=pyperclip.paste()
+                    if cb == "":
+                        Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
+                    else:
+                        Lastest_clip=cb
+                        try:
+                            
+                            if keyboard.is_pressed('right shift'):
+                                Lastest_clip=cb
+                                root = tk.Tk()
+                                root.attributes("-topmost", True)
+                                root.title(u"Double Alt Death")
+                                if os.path.exists('./alt_death.ico'):
+                                    root.iconbitmap('./alt_death.ico')
+                                else:
+                                    root.iconbitmap('./src/alt_death.ico')
+                                root.resizable(width=False, height=False)
+                                root.after(10, lambda: root.focus_force())
+                                root.bind(
+                                    '<Return>',lambda e: root.destroy()
+                                )
+                                tmp=modes.copy()
+                                tmp.extend(Customs)
+                                def change_mode_keyu(event):
+                                    global current_mode
+                                    current_mode-=1
+                                    current_mode%=len(tmp)
+                                    combo.current(current_mode)
+                                root.bind(
+                                    '<Up>',change_mode_keyu
+                                )
+                                def change_mode_keyd(event):
+                                    global current_mode
+                                    current_mode+=1
+                                    current_mode%=len(tmp)
+                                    combo.current(current_mode)
+                                root.bind(
+                                    '<Down>',change_mode_keyd
+                                )  
+                                combo = ttk.Combobox(root, state='readonly')
+                                
+                                combo["values"] = tmp
+                                
+                                combo.current(current_mode)
+                                def change_mode(event):
+                                    global current_mode
+                                    current_mode=tmp.index(combo.get())
+                                    root.destroy()
+                                
+                                combo.bind(
+                                    '<<ComboboxSelected>>',change_mode
+                                ) 
+                                
+                                combo.pack()
+                                def when_focus_out(event):
+                                    try:
+                                        if combo.focus_get() == None and str(event.widget) == ".":
+                                            root.destroy()
+                                    except KeyError:
+                                        return
+                                root.bind(
+                                    '<FocusOut>',when_focus_out
+                                )
+                                Thread(target=root.mainloop()).start
+                            sd=""   
+                            if current_mode == 0:
+                                sd = death_generator("\n".join(cb.split("\n")))
+                            elif current_mode == 1:
+                                sd=" ".join(list(cb))
+                            elif current_mode == 2:
+                                sd="　".join(list(cb))
+                            elif current_mode == 3:
+                                sd=""
+                                for t in list(cb):
+                                    if unicodedata.category(t)[0] in "ZP":
+                                        sd+=t
+                                    elif text_len(t)==1:
+                                        sd+=t+'ﾞ'
+                                    else:
+                                        sd+=t+'゛'
+                            elif current_mode == 4:
+                                sd="☆".join(list(cb))
+                            elif current_mode == 5:
+                                sd="★".join(list(cb))
+                            else:
+                                sd=Customs[current_mode-len(modes)].join(list(cb))
+                            pyperclip.copy(sd)
+                            Thread(target=partial(ws.PlaySound,'SystemAsterisk', ws.SND_ALIAS )).start()
+                        except Exception as e:
+                            raise e
                 break
         while keyboard.is_pressed('right alt'):
             pass
