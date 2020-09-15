@@ -13,16 +13,24 @@ import math
 import os
 import sys
 import tkinter as tk
+import json
 from tkinter import ttk
 from threading import Thread
 from functools import partial
 from PIL import Image, ImageTk
+import winsound as ws
 import wx.adv
 import webbrowser
 end_flag=False
 def callback(url):
     webbrowser.open_new(url)
-
+Customs=[]
+if os.path.exists("./customs.txt"):
+    f=open("./customs.txt",mode="r")
+    Customs=f.readlines()
+    f.close()
+else:
+    open("./customs.txt",mode="x").close()
 TRAY_TOOLTIP = 'Double Alt Death'
 if os.path.exists('./alt_death.ico'):
     TRAY_ICON = './alt_death.ico'
@@ -45,6 +53,8 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
     def CreatePopupMenu(self):
         menu = wx.Menu()
         create_menu_item(menu, '情報', self.menu_info)
+        create_menu_item(menu, 'カスタム文字の設定', self.menu_pref)
+        menu.AppendSeparator()
         create_menu_item(menu, '終了', self.menu_exit)
         return menu
 
@@ -77,7 +87,62 @@ class TaskBarIcon(wx.adv.TaskBarIcon):
         info_label=tk.Button(root, text="OK",command=lambda: root.destroy())
         info_label.pack(side="bottom",padx=10,fill=tk.X,pady=10)  
         root.mainloop()
+    def menu_pref(self, event):
+        root = tk.Tk()
+        root.title(u"Double Alt Death")
+        if os.path.exists('./alt_death.ico'):
+            root.iconbitmap('./alt_death.ico')
+        else:
+            root.iconbitmap('./src/alt_death.ico')
+        root.resizable(width=False, height=False)
+        root.geometry('300x225')
+        root.after(10, lambda: root.focus_force())
+        if os.path.exists('./alt_death.png'):
+            icon = ImageTk.PhotoImage(file='./alt_death.png')
+        else:
+            icon = ImageTk.PhotoImage(file='./src/alt_death.png')
+            
+        title_img = ttk.Label(root ,image=icon)
+        title_img.pack(pady=10)
         
+        info_label=tk.Label(root, text="カスタム文字の設定")
+        info_label.pack(anchor=tk.NW,padx=20)
+        buttons=tk.Frame(root)
+        def add_custom():
+            global Customs
+            if add_entry.get() == "":
+                Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
+                return
+            Customs.append(add_entry.get())
+            remove_combo["values"] = Customs
+            f=open("./customs.txt",mode="w")
+            f.write("\n".join(Customs))
+            f.close()
+        def del_custom():
+            global Customs
+            print(remove_combo.get())
+            if remove_combo.get() == "":
+                Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
+                pass
+            Customs.append(add_entry.get())
+            remove_combo["values"] = Customs
+            f=open("./customs.txt",mode="w")
+            f.write("\n".join(Customs))
+            f.close()
+        add_button=tk.Button(buttons, text="追加",command=add_custom)
+        add_button.grid(row=0, column=1,padx=2,pady=2)
+        add_entry=tk.Entry(buttons)
+        add_entry.grid(row=0, column=0,padx=2,pady=2)
+        remove_button=tk.Button(buttons, text="削除",command=del_custom)
+        remove_button.grid(row=1, column=1,padx=2,pady=2)
+        remove_combo = ttk.Combobox(buttons, state='readonly')
+        remove_combo["values"] = Customs
+        remove_combo.grid(row=1, column=0,padx=2,pady=2)
+        buttons.pack()
+        
+        ok_button=tk.Button(root, text="OK",command=lambda: root.destroy())
+        ok_button.pack(side="bottom",padx=10,fill=tk.X,pady=10)  
+        root.mainloop()
 
     def menu_exit(self, event):
         global end_flag
@@ -99,7 +164,7 @@ class My_Application(wx.Frame):
         sys.exit()
 
 
-modes=["突然の死","空白","全角空白","濁点"]
+modes=["突然の死","空白","全角空白","濁点","白星","黒星"]
 current_mode=0
 last_time=None
 last_cb=""
@@ -156,7 +221,9 @@ while not end_flag:
         while time.time() < t_end and not end_flag:
             if keyboard.is_pressed('right alt'):
                 cb=pyperclip.paste()
-                if cb != "":
+                if cb == "":
+                    Thread(target=partial(ws.PlaySound,'SystemQuestion', ws.SND_ALIAS )).start()
+                else:
                     
                     try:
                         if keyboard.is_pressed('right shift'):
@@ -172,10 +239,12 @@ while not end_flag:
                             root.bind(
                                 '<Return>',lambda e: root.destroy()
                             )
+                            tmp=modes.copy()
+                            tmp.extend(Customs)
                             def change_mode_keyu(event):
                                 global current_mode
                                 current_mode-=1
-                                current_mode%=len(modes)
+                                current_mode%=len(tmp)
                                 combo.current(current_mode)
                             root.bind(
                                 '<Up>',change_mode_keyu
@@ -183,17 +252,19 @@ while not end_flag:
                             def change_mode_keyd(event):
                                 global current_mode
                                 current_mode+=1
-                                current_mode%=len(modes)
+                                current_mode%=len(tmp)
                                 combo.current(current_mode)
                             root.bind(
                                 '<Down>',change_mode_keyd
                             )  
                             combo = ttk.Combobox(root, state='readonly')
-                            combo["values"] = modes
+                            
+                            combo["values"] = tmp
+                            
                             combo.current(current_mode)
                             def change_mode(event):
                                 global current_mode
-                                current_mode=modes.index(combo.get())
+                                current_mode=tmp.index(combo.get())
                                 root.destroy()
                             
                             combo.bind(
@@ -227,8 +298,14 @@ while not end_flag:
                                     sd+=t+'ﾞ'
                                 else:
                                     sd+=t+'゛'
+                        elif current_mode == 4:
+                            sd="☆".join(list(cb))
+                        elif current_mode == 5:
+                            sd="★".join(list(cb))
+                        else:
+                            sd=Customs[current_mode-len(modes)].join(list(cb))
                         pyperclip.copy(sd)
-                            
+                        Thread(target=partial(ws.PlaySound,'SystemAsterisk', ws.SND_ALIAS )).start()
                     except Exception as e:
                         raise e
                     last_time=time.time()
