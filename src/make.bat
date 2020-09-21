@@ -3,3 +3,4 @@ pyinstaller main.py --onefile --icon=alt_death.ico --hidden-import "tkinter" --h
 rm ./__pycache__ -r
 rm ./build -r
 rm ./Double_Alt_Death.spec
+pause
